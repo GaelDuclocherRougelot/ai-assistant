@@ -1,13 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Calendar, momentLocalizer } from "react-big-calendar"
 import moment from "moment"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import "moment/locale/fr"
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../api/firebase/route';
 
 moment.locale("fr")
 const localizer = momentLocalizer(moment)
+
+
 
 // Traductions personnalisées pour react-big-calendar
 const messages = {
@@ -29,6 +33,18 @@ export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [note, setNote] = useState("")
   const [mood, setMood] = useState("neutral")
+
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const notesSnapshot = await getDocs(collection(db, "notes"));
+      const notesList = notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setNotes(notesList);
+    };
+
+    fetchNotes();
+  }, []);
 
   const handleSelectDate = (date) => {
     setSelectedDate(date)
@@ -97,6 +113,7 @@ export default function DashboardPage() {
             Enregistrer
           </button>
         </form>
+        <span> {notes.length} notes pour le {moment(selectedDate).format("LL")}</span>
       </div>
     </div>
   )
