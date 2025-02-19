@@ -1,5 +1,3 @@
-'use client'
-
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -12,7 +10,6 @@ const firebaseConfig = {
 	messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 	appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
-
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

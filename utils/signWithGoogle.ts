@@ -1,18 +1,12 @@
+"use client";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
+
 const signInWithGoogle = async () => {
 	try {
-		const response = await fetch("/api/sign-in", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		const result = await signInWithPopup(auth, googleProvider)
 
-		if (!response.ok) {
-			throw new Error("Failed to sign in with Google");
-		}
-
-		const data = await response.json();
-		console.log(data.user);
+		return result.user;
 	} catch (error) {
 		console.error(error);
 		// Handle errors here, such as displaying a notification

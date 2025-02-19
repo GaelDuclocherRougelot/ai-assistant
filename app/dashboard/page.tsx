@@ -6,7 +6,7 @@ import moment from "moment"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import "moment/locale/fr"
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../api/firebase/route';
+import { db } from '@/lib/firebase';
 
 moment.locale("fr")
 const localizer = momentLocalizer(moment)

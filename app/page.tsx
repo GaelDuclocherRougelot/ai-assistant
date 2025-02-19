@@ -1,5 +1,5 @@
-import { Brain, Calendar, Lock, MessageSquare, PenTool } from "lucide-react";
 import GoogleAuth from "@/components/GoogleAuth";
+import { Brain, Calendar, Lock, MessageSquare, PenTool } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,7 +21,7 @@ export default function Home() {
 						>
 							Se connecter
 						</Link> */}
-            <GoogleAuth />
+						<GoogleAuth />
 					</div>
 				</nav>
 			</header>
