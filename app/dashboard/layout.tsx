@@ -1,8 +1,13 @@
+"use client";
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { Brain, Calendar, MessageSquare, User, LogOut } from "lucide-react"
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+
+  const { signOutUser, user } = useAuth();
+
   return (
     <div className="flex h-screen bg-gray-100">
       <aside className="w-64 bg-white shadow-md">
@@ -35,8 +40,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </aside>
       <main className="flex-1 overflow-y-auto p-8">
         <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">Tableau de bord</h1>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
+          <h1 className="text-2xl font-bold text-gray-800">Bienvenue {user?.displayName.split(' ').splice(0, 1)}</h1>
+          <button onClick={signOutUser} className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">
             <LogOut className="h-5 w-5" />
             <span>Déconnexion</span>
           </button>
