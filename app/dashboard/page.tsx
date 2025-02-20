@@ -90,7 +90,7 @@ export default function DashboardPage() {
 	}));
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-8 h-screen">
 			<div className="bg-white p-6 rounded-lg shadow">
 				<Calendar
 					localizer={localizer}
