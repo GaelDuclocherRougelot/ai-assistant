@@ -1,19 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Calendar, momentLocalizer } from "react-big-calendar"
-import moment from "moment"
-import "react-big-calendar/lib/css/react-big-calendar.css"
-import "moment/locale/fr"
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+// DashboardPage.js
+import { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "moment/locale/fr";
+import { addNote, getNotes } from '../../api/notes'; 
 
-moment.locale("fr")
-const localizer = momentLocalizer(moment)
+moment.locale("fr");
+const localizer = momentLocalizer(moment);
 
-
-
-// Traductions personnalisées pour react-big-calendar
 const messages = {
   allDay: "Journée",
   previous: "Précédent",
@@ -27,42 +24,57 @@ const messages = {
   time: "Heure",
   event: "Événement",
   noEventsInRange: "Aucun événement dans cette plage.",
-}
+};
 
 export default function DashboardPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date())
-  const [note, setNote] = useState("")
-  const [mood, setMood] = useState("neutral")
-
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [note, setNote] = useState("");
+  const [title, setTitle] = useState("");
+  const [mood, setMood] = useState("neutral");
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const notesSnapshot = await getDocs(collection(db, "notes"));
-      const notesList = notesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const notesList = await getNotes(); 
       setNotes(notesList);
     };
-
+  
     fetchNotes();
   }, []);
 
   const handleSelectDate = (date) => {
-    setSelectedDate(date)
-    // TODO: Fetch note and mood for the selected date from Firebase
-  }
+    setSelectedDate(date);
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // TODO: Save note and mood to Firebase
-    console.log("Saving note:", note, "and mood:", mood, "for date:", selectedDate)
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await addNote({
+        title: title, 
+        date: selectedDate,
+        note: note,
+        mood: mood,
+      });
+      console.log("Note saved successfully");
+      setNote("");
+      setMood("neutral");
+    } catch (error) {
+      console.error("Error saving note:", error);
+    }
+  };
+
+  const events = notes.map(note => ({
+    start: new Date(note.date), 
+    end: new Date(note.date),  
+    title: note.title || "Note sans titre", 
+  }));
 
   return (
     <div className="space-y-8">
       <div className="bg-white p-6 rounded-lg shadow">
         <Calendar
           localizer={localizer}
-          events={[]}
+          events={events}
           startAccessor="start"
           endAccessor="end"
           style={{ height: 400 }}
@@ -83,6 +95,14 @@ export default function DashboardPage() {
             <label htmlFor="note" className="block text-sm font-medium text-gray-700">
               Note
             </label>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Titre</label>
+              <input
+                id="title"
+                type="text"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             <textarea
               id="note"
               rows={4}
@@ -113,9 +133,7 @@ export default function DashboardPage() {
             Enregistrer
           </button>
         </form>
-        <span> {notes.length} notes pour le {moment(selectedDate).format("LL")}</span>
       </div>
     </div>
-  )
+  );
 }
-
