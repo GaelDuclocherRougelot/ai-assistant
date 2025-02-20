@@ -19,10 +19,14 @@ export default function RootLayout({
 	return (
 		<html lang="fr">
 			<AuthProvider>
-				<body className={inter.className}>{children}</body>
+				<body className={inter.className}>
+					{children}
+					<Toaster />
+				</body>
 			</AuthProvider>
 		</html>
 	);
 }
 
-import "./globals.css";
+import "./globals.css";import { Toaster } from "@/components/ui/toaster";
+
