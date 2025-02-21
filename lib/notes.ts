@@ -24,11 +24,18 @@ async function updateNote(noteId: string, updatedData: any) {
 	await updateDoc(noteRef, updatedData);
 }
 async function getNotes() {
+	const user = JSON.parse(localStorage.getItem("user"));
+	if(!user) {
+		throw new Error("User not authenticated");
+	}
 	const notesSnapshot = await getDocs(collection(db, "notes"));
-	const notesList = notesSnapshot.docs.map((doc) => ({
-		id: doc.id,
-		...doc.data(),
-	}));
+	const notesList = notesSnapshot.docs
+		.filter(doc => doc.data().user_id === user.uid)
+		.map((doc) => ({
+			id: doc.id,
+			...doc.data(),
+		}));
+
 	return notesList;
 }
 
