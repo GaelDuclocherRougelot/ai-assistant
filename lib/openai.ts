@@ -7,14 +7,14 @@ const client = new OpenAI({
 	organization: process.env.OPENAI_ORGANIZATION_KEY,
 });
 
-const fetchOpenAIResponse = async (userMessage) => {
+const fetchOpenAIResponse = async (userMessage, input, date) => {
 	try {
 		const response = await client.chat.completions.create({
 			model: "gpt-4",
 			messages: [
 				{
 					role: "user",
-					content: userMessage + "\n",
+					content:"A l'aide de " + input + "Formule moi une réponse avec les informations suivantes : " + userMessage + "\n" + "Prend bien en compte la " + date + "dans les notes ",
 				}
 			],
 		});

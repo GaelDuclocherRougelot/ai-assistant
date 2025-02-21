@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { fetchOpenAIResponse } from "@/lib/openai";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { extractDateFromQuery, fetchNotesForDate, getNotes } from "@/lib/notes";
 
 export default function ChatPage() {
 	const [messages, setMessages] = useState<
@@ -11,6 +12,7 @@ export default function ChatPage() {
 	>([]);
 	const [input, setInput] = useState<string>("");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!input.trim()) return;
@@ -19,11 +21,14 @@ export default function ChatPage() {
 		setMessages((prev) => [...prev, userMessage]);
 		setInput("");
 
-		// TODO: Send message to OpenAI API and get response
+		console.log("input : " + input);
+		const date = await extractDateFromQuery(input);
+		console.log(date);
 		setIsLoading(true);
-		const openapi = await fetchOpenAIResponse(userMessage.content);
-		setMessages((prev) => [...prev, openapi.choices[0].message]);
-		console.log(openapi.choices[0].message.content);
+			const notes = await getNotes();
+			const openapi = await fetchOpenAIResponse(JSON.stringify(notes), input, date);
+		
+			setMessages(prev => [...prev, { role: "assistant", content: openapi.choices[0].message.content }]);
 		setIsLoading(false);
 	};
 
