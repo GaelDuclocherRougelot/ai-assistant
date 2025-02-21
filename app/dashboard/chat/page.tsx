@@ -8,7 +8,7 @@ import { fetchOpenAIResponse } from "@/lib/openai";
 export default function ChatPage() {
 	const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
   const [input, setInput] = useState<string>("");
-
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!input.trim()) return;
@@ -18,11 +18,11 @@ export default function ChatPage() {
 		setInput("");
 
     // TODO: Send message to OpenAI API and get response
-
+    setIsLoading(true);
     const openapi = await fetchOpenAIResponse(userMessage.content);
 setMessages((prev) => [...prev, openapi.choices[0].message]);
     console.log(openapi.choices[0].message.content);
-    
+    setIsLoading(false);
 
     }
   
@@ -32,7 +32,7 @@ setMessages((prev) => [...prev, openapi.choices[0].message]);
           {messages.map((message: { role: string; content: string }, index: number) => (
             <div
               key={index}
-              className={`flex ${
+              className={`flex max-w-3/4 p-3 rounded-lg ${
                 message.role === "user"
                   ? "justify-end"
                   : "justify-start"
@@ -45,10 +45,17 @@ setMessages((prev) => [...prev, openapi.choices[0].message]);
                     : "bg-gray-100"
                 }`}
               >
-                {message.content}
+               <p className="whitespace-pre-line">{message.content}</p>
               </div>
             </div>
           ))}
+          				{isLoading && (
+					<div className="flex justify-start">
+						<div className="max-w-3/4 p-3 rounded-lg bg-gray-100 text-gray-800">
+							<p>En attente de la réponse de l'IA...</p>
+						</div>
+					</div>
+				)}
         </div>
         <form onSubmit={handleSubmit} className="border-t p-4 flex">
           <Input
